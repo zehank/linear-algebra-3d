@@ -1,0 +1,375 @@
+/* lab.css — 3D 实验室的版面。沿用 style.css 里的纸色 / 玉色 / 宋体标题。 */
+
+body.lab {
+  background: var(--paper);
+  overflow-x: hidden;
+}
+
+.lab-shell {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------------------------------- 顶栏 */
+
+.lab-bar {
+  flex: none;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+.lbrand {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.lbrand span {
+  margin-left: 5px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--jade);
+}
+.lsub {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+.lnav {
+  margin-left: auto;
+  display: flex;
+  gap: 20px;
+  font-family: var(--sans);
+  font-size: 12.5px;
+}
+.lnav a {
+  color: var(--ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lnav a:hover { color: var(--jade); }
+
+/* ---------------------------------------------------------------- 主体 */
+
+.lab-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+}
+
+.lab-panel {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 22px 44px;
+  border-right: 1px solid var(--line);
+}
+.lab-panel section + section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.lab-panel h2 {
+  margin: 0 0 8px;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.lab-panel .ph {
+  margin: 0 0 12px;
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--ink-3);
+}
+
+/* 表达式行 */
+
+.erow {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) 20px;
+  gap: 8px;
+  align-items: start;
+  padding: 8px 0 6px;
+  border-bottom: 1px solid var(--line);
+}
+.edot {
+  width: 11px;
+  height: 11px;
+  margin-top: 6px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-2);
+  background: var(--jade);
+  cursor: pointer;
+}
+.edot.off { background: transparent !important; }
+.einput {
+  width: 100%;
+  padding: 2px 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.einput:focus {
+  outline: none;
+  border-bottom-color: var(--jade);
+}
+.ehint {
+  padding-top: 4px;
+  font-family: var(--sans);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+.ehint.bad { color: var(--brick); }
+.edel {
+  padding: 4px 0 0;
+  border: 0;
+  background: none;
+  color: var(--ink-3);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+.edel:hover { color: var(--brick); }
+
+.panel-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.btn.small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.chips .chip { font-size: 11.5px; padding: 4px 10px; }
+
+/* 矩阵 */
+
+.matrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+}
+.mlabel {
+  width: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.minilabel {
+  margin: 12px 0 0;
+  font-family: var(--sans);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.m3 {
+  display: inline-grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 3px;
+  padding: 4px 10px;
+  border-left: 1.2px solid var(--ink-2);
+  border-right: 1.2px solid var(--ink-2);
+}
+.m3 .numin { width: 52px; }
+
+.mrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 6px;
+}
+.mrow label {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+.mrow input[type="range"] {
+  flex: 1;
+  width: auto;
+  min-width: 60px;
+}
+.pbtn {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+.pbtn:hover { color: var(--jade); border-color: var(--jade); }
+.mrow output {
+  min-width: 34px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.mnote {
+  margin: 8px 0 0;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+/* 视口 */
+
+.lab-view {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background: var(--paper);
+}
+.lab-view canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+.lab-view canvas.dragging { cursor: grabbing; }
+@media (hover: none) and (pointer: coarse) {
+  .lab-view canvas { touch-action: pan-y; }
+}
+
+.vhint,
+.vtime,
+.vdet {
+  position: absolute;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+.vhint { left: 18px; top: 15px; color: var(--ink-3); }
+.vtime { right: 18px; top: 15px; font-family: var(--mono); color: var(--ink-3); }
+.vdet { left: 18px; bottom: 15px; font-family: var(--mono); color: var(--jade); }
+
+/* ---------------------------------------------------------------- 说明 */
+
+.lab-about {
+  border-top: 1px solid var(--line);
+  padding: 66px 0 84px;
+}
+.lab-about .wrap {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.lab-about h2 {
+  margin: 0 0 26px;
+  font-family: var(--display);
+  font-size: clamp(24px, 2.8vw, 32px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.lab-about h3 {
+  margin: 26px 0 8px;
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 700;
+}
+.lab-about p {
+  max-width: 40em;
+  margin: 0 0 14px;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ink-2);
+}
+.lab-about p.en {
+  margin-top: -4px;
+  padding-left: 14px;
+  border-left: 2px solid rgba(14, 107, 87, 0.28);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.lab-about .more {
+  margin-top: 30px;
+  font-family: var(--sans);
+  font-size: 14px;
+}
+.lab-about .more a { color: var(--jade); text-underline-offset: 3px; }
+
+/* ---------------------------------------------------------------- 窄屏 */
+
+@media (max-width: 900px) {
+  .lab-shell { height: auto; }
+  .lab-bar { gap: 12px; padding: 0 16px; }
+  .lsub { display: none; }
+  .lab-main { grid-template-columns: minmax(0, 1fr); }
+  .lab-panel {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 16px 18px 24px;
+  }
+  .lab-view {
+    order: -1;
+    height: 56vh;
+    min-height: 340px;
+  }
+  .vhint { display: none; }
+  .vdet { left: 14px; bottom: 12px; }
+  .lab-about .wrap { padding: 0 20px; }
+  .m3 .numin { width: 46px; }
+}
+
+/* 双语排版：中文在前，英文在后 */
+.h2-en {
+  margin-left: 6px;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+}
+.ph-en {
+  display: block;
+  margin-top: 4px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+.lab-en {
+  margin-left: 3px;
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+.chip .ce {
+  margin-left: 4px;
+  font-size: 0.92em;
+  color: var(--ink-3);
+}

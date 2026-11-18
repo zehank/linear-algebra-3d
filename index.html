@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>线性代数 3D 实验室 · Linear Algebra 3D Lab</title>
+<meta name="description" content="写一条式子，3D 立刻跟着变；换基、向量相加与叉积、3×3 矩阵与复合动画。Write an expression and the 3D scene changes; change of basis, vector sums, cross products, matrix composition.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23EDEEE7'/%3E%3Cpath d='M16 6v20M6 22l10-16 10 16' fill='none' stroke='%230E6B57' stroke-width='1.6'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/lab.css">
+</head>
+<body class="lab">
+
+<div class="lab-shell">
+
+  <header class="lab-bar">
+    <a class="lbrand" href="index.html">线性代数 <span>3D</span></a>
+    <span class="lsub">写一条式子，看空间怎么变 · write an expression, watch space change</span>
+    <nav class="lnav">
+      <a href="chapters.html">六章讲义 Chapters</a>
+      <a href="#about">这张图在讲什么 About</a>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+
+    <aside class="lab-panel">
+
+      <section>
+        <h2>表达式 <span class="h2-en">Expressions</span></h2>
+        <p class="ph">一行一个。z = f(x, y) 是曲面；线性方程是平面；(1, 2, 3) 是向量，还能写相加、叉积 a × b、dot(a, b)。<span class="ph-en">One per line: z = f(x, y) is a surface, a linear equation is a plane, (1, 2, 3) is a vector. Sums and a × b work too.</span></p>
+        <div id="rows"></div>
+        <div class="panel-foot">
+          <button class="btn ghost small" id="addRow" type="button">+ 再加一条 Add</button>
+        </div>
+        <div class="chips" id="presets"></div>
+      </section>
+
+      <section>
+        <h2>变换矩阵 <span class="h2-en">Transformation</span></h2>
+        <p class="ph">A 的三列是三个基向量被送到的位置。进度 0→1 走完 A，1→2 接着走 B：合成矩阵是 BA。<span class="ph-en">The columns of A are where the basis vectors land. 0→1 applies A, 1→2 applies B on top; the composite is BA.</span></p>
+        <div class="matrow"><span class="mlabel">A</span><div class="m3" id="emat"></div></div>
+        <div class="matrow"><span class="mlabel">B</span><div class="m3" id="bmat"></div></div>
+        <div class="mrow">
+          <label for="tslider">进度 <span class="lab-en">progress</span></label>
+          <input type="range" id="tslider" min="0" max="2" step="0.01" value="1">
+          <output id="tout">1.00</output>
+          <button class="pbtn" id="play" type="button" title="播放 0 → 2 · play" aria-label="播放变换过程 play the transformation">▶</button>
+        </div>
+        <p class="mnote">0 = 单位 identity · 1 = A · 2 = BA</p>
+        <p class="minilabel">A 的预设 <span class="lab-en">presets</span></p>
+        <div class="chips" id="mpresets"></div>
+        <p class="minilabel">B 的预设 <span class="lab-en">presets</span></p>
+        <div class="chips" id="bpresets"></div>
+        <p class="mnote" id="composeInfo"></p>
+      </section>
+
+      <section>
+        <h2>基 B <span class="h2-en">Basis</span></h2>
+        <p class="ph">换一套坐标格子：空间里的点不动，格子跟着基变。三列是新的基向量，虚线 u₁ u₂ u₃ 就是它们。<span class="ph-en">A different basis redraws the grid; the points stay put. The dashed arrows are the new basis vectors u₁ u₂ u₃.</span></p>
+        <div class="m3" id="basismat"></div>
+        <p class="mnote" id="basisInfo">det B = 1</p>
+        <div class="chips" id="baspresets"></div>
+      </section>
+
+    </aside>
+
+    <div class="lab-view">
+      <canvas id="stage" aria-label="三维曲面与线性变换的可视化，可拖动旋转 · 3D surface and linear transformations, drag to rotate"></canvas>
+      <div class="vhint">拖动旋转 drag · 滚轮缩放 zoom · 双击复位 reset</div>
+      <div class="vtime" id="vtime" hidden>t = 0.00</div>
+      <div class="vdet" id="vdet">det = 1.00</div>
+    </div>
+
+  </main>
+</div>
+
+<section class="lab-about" id="about">
+  <div class="wrap">
+    <h2>这张图在讲什么 <span class="h2-en">What you are looking at</span></h2>
+    <p>这台机器只做两件事：把你写的式子画成空间里的东西，再让矩阵把整个空间拉一遍。线性代数最要紧的几个念头，都在这两件事里头。</p>
+    <p class="en">Two jobs only: turn your expression into something in space, and let a matrix move all of space at once.</p>
+
+    <h3>一个式子，一片曲面 <span class="h2-en">One expression, one surface</span></h3>
+    <p>z = x² − y² 是马鞍面：一个方向往上弯，另一个方向往下弯。改一个系数，整个曲面立刻变——你改的不是图，是一个函数。</p>
+    <p class="en">A surface is just a function of two variables, drawn as height above the plane.</p>
+
+    <h3>一个矩阵，一次空间的整体动作 <span class="h2-en">A matrix moves all of space</span></h3>
+    <p>矩阵的三列，就是三个基向量被送到的地方。其余所有点没有选择，只能跟着一起走到相应的位置——这就是"线性"的含义：整片空间被同一个规则搬动，不撕裂、不折叠（除非 det = 0）。</p>
+    <p>把进度从 0 拖到 1，看到的是 A 进行到一半的样子；1 再拖到 2，是在 A 之后接着做 B。两段合起来的矩阵是 BA——注意顺序：写在左边的是后做的那个，所以 <b>BA</b> 的意思是"先 A 后 B"。</p>
+    <p class="en">Its columns are where the basis vectors land; every other point follows along. Read AB right-to-left: B happens first.</p>
+
+    <h3>行列式，体积的倍数 <span class="h2-en">Determinant: how volume scales</span></h3>
+    <p>单位立方体被搬成一个平行六面体，体积放大 |det A| 倍。det = 0 时空间被压成一张平面，体积归零——方向被丢掉了，变换不可逆。点一下"压扁"，这件事一次就记住了。</p>
+    <p class="en">The determinant is the factor by which volume changes; det = 0 means the map is not invertible.</p>
+
+    <h3>换一组基，格子变了，点没变 <span class="h2-en">Change the basis: grid moves, points do not</span></h3>
+    <p>把"基 B"换掉，地面上的格子会跟着歪、跟着转，可空间里的曲面和向量一动都没动。变的只是它们在新基下的坐标——同一个点，不同的记法。这也是为什么"坐标"从来不是向量本身。</p>
+    <p class="en">Changing the basis reshapes the grid, not the space; only the coordinates change.</p>
+
+    <h3>向量相加与叉积 <span class="h2-en">Vector sums and the cross product</span></h3>
+    <p>写 (1, 1, 0) + (1.2, 2, 1)，两个加数用细箭头画出来，虚线补全平行四边形，粗箭头是结果。叉积 a × b 会画出一个与两者都垂直的向量，长度等于它们张成的平行四边形面积；dot(a, b) 只给一个数。</p>
+    <p class="en">Vector addition fills in the parallelogram; the cross product is perpendicular to both and its length is that area.</p>
+
+    <h3>三张平面，交于一点 <span class="h2-en">Three planes, one point</span></h3>
+    <p>每条线性方程都是空间里的一张平面。三张平面一般刚好交于一点，那个点就是 3×3 方程组的解——和二维里两条直线交于一点是同一件事。点"三个平面"看一次。</p>
+    <p class="en">Three planes meeting at a single point is what solving a 3×3 system looks like.</p>
+
+    <p class="more">想按顺序把这些念头过一遍：<a href="chapters.html">六章讲义 · six chapters</a>（组合 → 变换 → 方程 → 行列式 → 特征 → 正交）。</p>
+  </div>
+</section>
+
+<script src="assets/expr.js"></script>
+<script src="assets/scene3d.js"></script>
+<script src="assets/lab.js"></script>
+</body>
+</html>

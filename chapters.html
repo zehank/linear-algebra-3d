@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>线性代数 · 六章讲义</title>
+<meta name="description" content="六个概念、七张能拖的图、中英对照的术语和随手练的题：把线性代数看成空间的动作。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23EDEEE7'/%3E%3Cpath d='M0 16h32M16 0v32' stroke='%230E6B57' stroke-width='1.4'/%3E%3Cpath d='M16 16L26 9' stroke='%23161915' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='%23161915'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <a class="backlink" href="index.html">← 回到 3D 实验室</a>
+    <a class="brand" href="#top">
+      <span class="bd">线性代数</span>
+      <span class="bs">交互地图 · interactive map</span>
+    </a>
+    <nav aria-label="章节目录">
+      <ol class="toc" id="toc">
+        <li><a href="#ch1"><span class="n">1</span>向量与线性组合</a></li>
+        <li><a href="#ch2"><span class="n">2</span>矩阵就是变换</a></li>
+        <li><a href="#ch3"><span class="n">3</span>线性方程组</a></li>
+        <li><a href="#ch4"><span class="n">4</span>行列式</a></li>
+        <li><a href="#ch5"><span class="n">5</span>特征向量</a></li>
+        <li><a href="#ch6"><span class="n">6</span>正交与最小二乘</a></li>
+        <li class="sep"><a href="#practice"><span class="n">练</span>练习</a></li>
+        <li class="sep"><a href="#glossary"><span class="n">词</span>术语表</a></li>
+      </ol>
+    </nav>
+    <div class="rail-foot">
+      <p>已读 <b id="progress">0 / 6</b> 章</p>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ============================================================ 首页 -->
+    <section class="hero" id="top">
+      <canvas id="hero" aria-label="可拖动的 2×2 矩阵：两个手柄分别是它的两列"></canvas>
+      <div class="hero-top">
+        <h1>矩阵是一个动作。</h1>
+        <p class="hero-lead">它不只是一张数表：它抓住整个平面，拉伸、旋转、压扁。格子里那两个点就是它的两列 <span class="en">columns</span>——拖一下，看空间跟着变形。</p>
+      </div>
+      <div class="hero-foot">
+        <div class="hero-actions-wrap">
+          <p class="hero-hint">拖手柄改两列，或者选一个预设</p>
+          <div class="hero-actions" id="heroPresets">
+            <button class="chip" data-m="rot">旋转 30°</button>
+            <button class="chip" data-m="shear">剪切</button>
+            <button class="chip" data-m="flatten">压扁</button>
+            <button class="chip" data-m="flip">翻转</button>
+          </div>
+        </div>
+        <div class="readout-card" id="heroReadout">
+          <div class="rc-top"><span>矩阵 A</span><span id="heroDet">det 1</span></div>
+          <div class="hero-mat-row">
+            <div class="hm" id="heroMat"><span>1</span><span>0</span><span>0</span><span>1</span></div>
+            <span class="hm-note" id="heroNote">面积 × 1</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 第 1 章 -->
+    <section class="chapter" id="ch1">
+      <div class="wrap">
+        <header class="chapter-head">
+          <h2><span class="ch-num">1</span>向量与线性组合</h2>
+          <p class="ch-tagline">vector · linear combination · span · basis</p>
+        </header>
+
+        <p class="lead">一个向量是一列数，也是一支箭头。整个线性代数只追问一件事：把这些箭头按不同的倍数加起来，能到达哪些地方？</p>
+
+        <h3>向量是一份配方</h3>
+        <p>在 <var>R</var><sup>2</sup> 里，(3, 1) 的意思是"向东 3 步、向北 1 步"。在 <var>R</var><sup>4</sup> 里就是四个数。数几个数，就是几维——几何图像只是它的一个壳。</p>
+        <p>真正重要的是它只允许两种操作：两个向量可以相加，一个向量可以乘一个数。这两条就是"线性" <span class="en">linear</span> 的全部来源，其余性质都是它们推出来的。</p>
+
+        <div class="def">
+          <span class="def-tag">定义 · definition</span>
+          <p>向量 <span class="en">vector</span> 是一列数；它的合法操作只有加法 <span class="en">addition</span> 与数乘 <span class="en">scalar multiplication</span>。</p>
+        </div>
+        <p class="gloss">A vector is a list of numbers. You may add two vectors, and you may scale one by a number.</p>
+
+        <h3>把箭头加起来</h3>
+        <p>给几个向量各配一个系数，加起来，得到的东西叫线性组合 <span class="en">linear combination</span>：</p>
+        <p class="formula"><var>c</var><sub>1</sub><var>v</var> + <var>c</var><sub>2</sub><var>w</var></p>
+        <p>系数可以是任何实数：正数、负数、零。于是问题变成：所有可能的搭配，能覆盖多大的地方？</p>
+
+        <figure class="plate" data-widget="span">
+          <div class="plate-head"><b>张成 · span</b><span class="readout" data-out>—</span></div>
+          <canvas aria-label="拖动两个向量手柄，观察线性组合点"></canvas>
+          <div class="controls">
+            <div class="ctl"><label>c₁</label><input type="range" min="-2.2" max="2.2" step="0.05" value="1" data-k="c1"><output>1.0</output></div>
+            <div class="ctl"><label>c₂</label><input type="range" min="-2.2" max="2.2" step="0.05" value="1" data-k="c2"><output>1.0</output></div>
+            <button class="chip" data-act="lattice" aria-pressed="false">整数组合</button>
+          </div>
+          <figcaption>两个手柄拖一拖，看组合点 <b>c₁v + c₂w</b> 能跑到哪里。打开"整数组合"，所有 (0, ±1, ±2…) 的搭配一起亮：铺满平面，还是坍缩成一条线？</figcaption>
+        </figure>
+
+        <p>两个不共线的向量，能拼出平面上的每一个点——它们张成 <span class="en">span</span> 整个平面，也叫线性无关 <span class="en">linearly independent</span>。一旦共线，所有组合都挤在那条线上，就变成线性相关 <span class="en">dependent</span>。</p>
+
+        <div class="def">
+          <span class="def-tag">定义 · definition</span>
+          <p>一组向量的张成 <span class="en">span</span> = 它们全部线性组合的集合。若其中某个向量能由其余的表示，这组向量线性相关 <span class="en">dependent</span>；否则线性无关 <span class="en">independent</span>。</p>
+        </div>
+        <p class="gloss">Span is the set of every linear combination. A set is dependent when one of its vectors is already reachable from the others.</p>
+
+        <p>平面上放三个向量，一定相关。理由很朴素：要让 <var>c</var><sub>1</sub><var>v</var><sub>1</sub> + <var>c</var><sub>2</sub><var>v</var><sub>2</sub> + <var>c</var><sub>3</sub><var>v</var><sub>3</sub> = 0 成立，是两个方程、三个未知数——未知数比约束多，总有一组不全为零的解。</p>
+
+        <h3>换一组基，坐标就变了</h3>
+        <p>两个不共线、又能张成整个平面的向量，配得上一个名字：基 <span class="en">basis</span>。用一组基去表示一个向量，那组系数就是它的坐标 <span class="en">coordinates</span>。</p>
+        <p>标准基 <var>e</var><sub>1</sub> = (1, 0)、<var>e</var><sub>2</sub> = (0, 1) 只是最省事的选法。同一个点 (3, 5)，在基 (1, 1)、(1, −1) 下的坐标是 (4, −1)，因为 4(1, 1) + (−1)(1, −1) = (3, 5)。</p>
+
+        <div class="def">
+          <span class="def-tag">定义 · definition</span>
+          <p>基 <span class="en">basis</span> = 一组线性无关、且能张成整个空间的向量。维数 <span class="en">dimension</span> = 基里向量的个数（同一个空间，基怎么选，个数都不变）。</p>
+        </div>
+        <p class="gloss">Coordinates are not the vector itself. They are that vector's coefficients in a chosen basis.</p>
+
+        <div class="quiz-set">
+          <details class="quiz">
+            <summary><var>v</var> = (1, 2)，<var>w</var> = (2, 4)，它们张成什么？</summary>
+            <div class="a"><p><span class="tag">答</span>一条直线 <var>y</var> = 2<var>x</var>。因为 <var>w</var> = 2<var>v</var>，任何组合 <var>c</var><sub>1</sub><var>v</var> + <var>c</var><sub>2</sub><var>w</var> = (<var>c</var><sub>1</sub> + 2<var>c</var><sub>2</sub>)<var>v</var> 都躺在 <var>v</var> 的方向上。它们线性相关，秩为 1。</p></div>
+          </details>
+          <details class="quiz">
+            <summary>点 (3, 5) 在基 (1, 1)、(1, −1) 下的坐标是多少？</summary>
+            <div class="a"><p><span class="tag">答</span>(4, −1)。解 <var>c</var><sub>1</sub>(1, 1) + <var>c</var><sub>2</sub>(1, −1) = (3, 5)：第一式 <var>c</var><sub>1</sub> + <var>c</var><sub>2</sub> = 3，第二式 <var>c</var><sub>1</sub> − <var>c</var><sub>2</sub> = 5，两式相加得 <var>c</var><sub>1</sub> = 4，回代得 <var>c</var><sub>2</sub> = −1。</p></div>
+          </details>
+          <details class="quiz">
+            <summary>为什么平面上三个向量一定线性相关？</summary>
+            <div class="a"><p><span class="tag">答</span>求 <var>c</var><sub>1</sub><var>v</var><sub>1</sub> + <var>c</var><sub>2</sub><var>v</var><sub>2</sub> + <var>c</var><sub>3</sub><var>v</var><sub>3</sub> = 0，展开后是两个方程、三个未知数。齐次方程组未知数多于方程，必有非零解，也就是能找到一个向量被另外两个表示出来。</p><p>这条推理可以推广成一句通用判据：<b>空间里放超过维数个向量，必然相关。</b></p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 第 2 章 -->
+    <section class="chapter" id="ch2">
+      <div class="wrap">
+        <header class="chapter-head">
+          <h2><span class="ch-num">2</span>矩阵就是变换</h2>
+          <p class="ch-tagline">matrix · linear transformation · composition</p>
+        </header>
+
+        <p class="lead">矩阵不是一张数表，它是一个动作：抓住平面上每一个点，按同一套线性规则搬到别处。</p>
+
+        <h3>只看基向量去了哪</h3>
+        <p>线性变换 <span class="en">linear transformation</span> 守两条规矩：原点不动；直线搬过去还是直线，网格线保持平行、等距。所以只要知道两个基向量被送到哪里，整个平面就被完全确定了。</p>
+        <p><var>A</var> 的第一列 = <var>e</var><sub>1</sub> 的去处，第二列 = <var>e</var><sub>2</sub> 的去处：</p>
+        <p class="formula"><var>A</var> = <span class="mat" style="--c:2"><span>a</span><span>b</span><span>c</span><span>d</span></span>，<var>Ae</var><sub>1</sub> = <span class="mat" style="--c:1"><span>a</span><span>c</span></span>，<var>Ae</var><sub>2</sub> = <span class="mat" style="--c:1"><span>b</span><span>d</span></span></p>
+        <p>于是任意点 (<var>x</var>, <var>y</var>) 的像就是 <var>x</var> 乘第一列、加 <var>y</var> 乘第二列。矩阵乘向量的规则不是凭空规定的——它就是"按坐标把列拼起来"这句话的缩写。</p>
+
+        <figure class="plate" data-widget="transform">
+          <div class="plate-head"><b>线性变换 · transform</b><span class="readout" data-out>—</span></div>
+          <canvas aria-label="拖动两个手柄改变矩阵的两列，观察网格与图形的变形"></canvas>
+          <div class="controls">
+            <div class="ctl">
+              <label>A =</label>
+              <div class="eqed two">
+                <input class="numin" value="1" data-i="0"><input class="numin" value="0.6" data-i="1">
+                <input class="numin" value="-0.4" data-i="2"><input class="numin" value="1.2" data-i="3">
+              </div>
+            </div>
+            <div class="chips">
+              <button class="chip" data-preset="rot90">旋转 90°</button>
+              <button class="chip" data-preset="shear">剪切</button>
+              <button class="chip" data-preset="scale">放大 2 倍</button>
+              <button class="chip" data-preset="project">投影到 x 轴</button>
+              <button class="chip" data-preset="reflect">关于 y 轴翻转</button>
+            </div>
+          </div>
+          <figcaption>虚线是原来的格子，绿线是变换后的格子。两个手柄就是 <b>Ae₁</b> 和 <b>Ae₂</b>。数字框可以直接改，也可以拖动。</figcaption>
+        </figure>
+
+        <h3>四种常见动作</h3>
+        <ul class="plain">
+          <li><b>旋转</b> <span class="en">rotation</span>：<span class="mat" style="--c:2"><span>cos θ</span><span>−sin θ</span><span>sin θ</span><span>cos θ</span></span>，长度全部不变，det = 1。</li>
+          <li><b>缩放</b> <span class="en">scaling</span>：对角阵，两个方向各放大几倍，det 是两个倍数的乘积。</li>
+          <li><b>剪切</b> <span class="en">shear</span>：<span class="mat" style="--c:2"><span>1</span><span>k</span><span>0</span><span>1</span></span>，把正方形推成平行四边形，面积不变，det = 1。</li>
+          <li><b>投影</b> <span class="en">projection</span>：<span class="mat" style="--c:2"><span>1</span><span>0</span><span>0</span><span>0</span></span>，把整个平面压到 <var>x</var> 轴上，det = 0。</li>
+        </ul>
+        <p>最后一种值得停下来看：投影把一整条竖线上的点全部压到同一个点上。两个不同的输入有同一个输出，这件事不可逆——你没法从 (2, 0) 反推出原来是在 (2, 5) 还是 (2, −3)。<b>信息丢了，就没法倒车。</b>这就是"不可逆"在几何上的意思，也是 det = 0 的意思。</p>
+
+        <h3>复合：顺序要反着读</h3>
+        <p>先做 <var>B</var>，再做 <var>A</var>，写成 <var>AB</var>。写在最右边的是最先动手的那个，因为它最先碰到 <var>x</var>：</p>
+        <p class="formula"><var>A</var>(<var>Bx</var>) = (<var>AB</var>)<var>x</var></p>
+        <p>所以矩阵乘法不可交换 <var>AB</var> ≠ <var>BA</var>——先穿袜子再穿鞋，和反过来，结果不一样。计算规则是：<var>AB</var> 的第 <var>i</var> 行第 <var>j</var> 列，等于 <var>A</var> 的第 <var>i</var> 行点乘 <var>B</var> 的第 <var>j</var> 列。</p>
+        <p>举个例子。逆时针转 90° 记作 <var>R</var>，关于 <var>x</var> 轴翻转记作 <var>F</var>：</p>
+        <p class="formula"><var>R</var> = <span class="mat" style="--c:2"><span>0</span><span>−1</span><span>1</span><span>0</span></span>，<var>F</var> = <span class="mat" style="--c:2"><span>1</span><span>0</span><span>0</span><span>−1</span></span>，<var>FR</var> = <span class="mat" style="--c:2"><span>0</span><span>−1</span><span>−1</span><span>0</span></span></p>
+        <p>验一下：<var>e</var><sub>1</sub> 先转成 (0, 1)，再翻成 (0, −1)，正好是 <var>FR</var> 的第一列。</p>
+
+        <div class="quiz-set">
+          <details class="quiz">
+            <summary>剪切 <span class="mat" style="--c:2"><span>1</span><span>1</span><span>0</span><span>1</span></span> 把 <var>e</var><sub>2</sub> = (0, 1) 送到哪？</summary>
+            <div class="a"><p><span class="tag">答</span>(1, 1)。第二列就是它：<span class="mat" style="--c:1"><span>1</span><span>1</span></span>。几何上它把竖直方向整体往右推了一格，所以正方形变成了平行四边形，但面积不变。</p></div>
+          </details>
+          <details class="quiz">
+            <summary>先转 90°，再关于 <var>x</var> 轴翻转，合成矩阵是什么？</summary>
+            <div class="a"><p><span class="tag">答</span><var>FR</var> = <span class="mat" style="--c:2"><span>0</span><span>−1</span><span>−1</span><span>0</span></span>。两个办法都能得：一是直接算 <var>FR</var>；二是看两个基向量的遭遇——<var>e</var><sub>1</sub> → (0, 1) → (0, −1)，<var>e</var><sub>2</sub> → (−1, 0) → (−1, 0)，两列一拼就是答案。</p></div>
+          </details>
+          <details class="quiz">
+            <summary>为什么 det = 0 的变换一定不可逆？</summary>
+            <div class="a"><p><span class="tag">答</span>det = 0 意味着两列线性相关，整个平面被压进一条线（极端情况下压成一个点）。线上一段有无穷多个点，它们互相挤在一起——从像你分不清它们原来是谁。代数上说：方程 <var>Ax</var> = 0 有非零解，所以 <var>A</var> 有零空间，映射不是一一的。</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 第 3 章 -->
+    <section class="chapter" id="ch3">
+      <div class="wrap">
+        <header class="chapter-head">
+          <h2><span class="ch-num">3</span>线性方程组</h2>
+          <p class="ch-tagline">Ax = b · rank · null space</p>
+        </header>
+
+        <p class="lead">同一个式子 <var>Ax</var> = <var>b</var>，有两种看法：一行看是直线的交点，一列看是向量的拼装。两种都要会在手上。</p>
+
+        <h3>行图像：每条方程是一条线</h3>
+        <p>每个方程都是一个限制。<var>x</var> + <var>y</var> = 3 是平面上一条直线；再给一个方程，又一条线。解就是它们共同的交点——所以在二维里，两个方程一般给一个解。</p>
+        <p>三种结局也一眼看得出：两线交于一点（唯一解）、平行（无解）、重合（无穷多解）。</p>
+
+        <h3>列图像：b 能不能由两列拼出来</h3>
+        <p>把 <var>A</var> 横着切开看，<var>Ax</var> 是两列的线性组合：</p>
+        <p class="formula"><var>Ax</var> = <var>x</var><sub>1</sub><span class="col-vec">列 1</span> + <var>x</var><sub>2</sub><span class="col-vec">列 2</span></p>
+        <p>于是"解方程"变成"找那组拼装配方"。<var>b</var> 落在两列张成的平面里，就有解；两列共线时，<var>b</var> 必须正好落在那条线上——否则怎么配都够不着。</p>
+
+        <figure class="plate" data-widget="system">
+          <div class="plate-head"><b>行图像 / 列图像 · row &amp; column</b><span class="readout" data-out>—</span></div>
+          <canvas aria-label="左图是两条直线的交点，右图是两列的线性组合"></canvas>
+          <div class="controls">
+            <div class="ctl">
+              <label>[A | b] =</label>
+              <div class="eqed">
+                <input class="numin" value="1" data-i="0"><input class="numin" value="2" data-i="1"><input class="numin" value="3" data-i="2">
+                <input class="numin" value="3" data-i="3"><input class="numin" value="-1" data-i="4"><input class="numin" value="2" data-i="5">
+              </div>
+            </div>
+            <div class="ctl"><label>x₁</label><input type="range" min="-3" max="3" step="0.01" value="0" data-k="x1"><output>0</output></div>
+            <div class="ctl"><label>x₂</label><input type="range" min="-3" max="3" step="0.01" value="0" data-k="x2"><output>0</output></div>
+            <button class="chip" data-act="solve">跳到解</button>
+          </div>
+          <figcaption>左：两条直线的交点。<b>右：</b>先用 <b>x₁</b> 走第一列，再用 <b>x₂</b> 走第二列，看能不能刚好落在 <b>b</b> 上。拖到相交处，两张图说的是同一件事。</figcaption>
+        </figure>
+
+        <h3>三种结局，一句话说清</h3>
+        <ul class="plain">
+          <li><b>det(<var>A</var>) ≠ 0</b>：两列不共线，能拼出整个平面，任何 <var>b</var> 都有唯一解。</li>
+          <li><b>det(<var>A</var>) = 0，且 <var>b</var> 在列空间里</b>：有无穷多解，它们差在一个零空间的方向上。</li>
+          <li><b>det(<var>A</var>) = 0，且 <var>b</var> 不在列空间里</b>：无解。</li>
+        </ul>
+
+        <div class="def">
+          <span class="def-tag">定义 · definition</span>
+          <p>零空间 <span class="en">null space</span> = 所有满足 <var>Ax</var> = 0 的 <var>x</var>。列空间 <span class="en">column space</span> = <var>A</var> 所有列的线性组合构成的集合。</p>
+        </div>
+        <p class="gloss">The rank of A is the dimension of its column space; the null space collects everything A crushes to zero.</p>
+        <p>秩 <span class="en">rank</span> 是列空间的维数——它说"像有多少维"。零空间的维数叫零化度 <span class="en">nullity</span>——它说"多少维被压没了"。对 <var>n</var> 列的矩阵，两者加起来恒等于 <var>n</var>：</p>
+        <p class="formula">rank + nullity = <var>n</var></p>
+        <p>这条等式就是守恒律：进去的维度，要么留在像里，要么落进零空间，不会凭空消失。</p>
+
+        <h3>消元法在做什么</h3>
+        <p>高斯消元 <span class="en">Gaussian elimination</span> 就是反复把一行减去另一行的倍数。每一步都对应一个可逆的变换，所以解集不变；做到上三角，再从下往上回代。</p>
+        <p>消元过程中若出现 <b>0 = 0</b>，说明方程之间有冗余——解不唯一。若出现 <b>0 = 非零</b>，说明条件互相矛盾——无解。</p>
+
+        <div class="quiz-set">
+          <details class="quiz">
+            <summary><var>x</var> + <var>y</var> = 3 与 2<var>x</var> + 2<var>y</var> = 6，有几个解？</summary>
+            <div class="a"><p><span class="tag">答</span>无穷多。第二个方程就是第一个的两倍，两条线完全重合。系数矩阵 <span class="mat" style="--c:2"><span>1</span><span>1</span><span>2</span><span>2</span></span> 的 det = 0，列共线，秩为 1，解是一条直线上的所有点。</p></div>
+          </details>
+          <details class="quiz">
+            <summary><var>x</var> + <var>y</var> = 3 与 <var>x</var> + <var>y</var> = 4 呢？</summary>
+            <div class="a"><p><span class="tag">答</span>无解。两线平行，交不出来。用列图像看更清楚：<var>b</var> = (3, 4) 不在两列张成的那条线上。</p></div>
+          </details>
+          <details class="quiz">
+            <summary><var>A</var> = <span class="mat" style="--c:2"><span>1</span><span>2</span><span>2</span><span>4</span></span> 的零空间和列空间各是什么？</summary>
+            <div class="a"><p><span class="tag">答</span>零空间：解 <var>x</var><sub>1</sub> + 2<var>x</var><sub>2</sub> = 0，得到所有 <var>t</var>(−2, 1)，是一条过原点的直线，nullity = 1。列空间：两列成比例 (1, 2) 与 (2, 4)，张成的是沿 (1, 2) 的那条直线，rank = 1。两维加起来正好是 <var>n</var> = 2。</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 第 4 章 -->
+    <section class="chapter" id="ch4">
+      <div class="wrap">
+        <header class="chapter-head">
+          <h2><span class="ch-num">4</span>行列式</h2>
+          <p class="ch-tagline">determinant · area · orientation</p>
+        </header>
+
+        <p class="lead">行列式只有一个意思：这个变换把面积放大了几倍。符号是朝向有没有翻。</p>
+
+        <h3>面积和朝向</h3>
+        <p>单位正方形经过 <var>A</var> 之后变成一个平行四边形。它的面积就是 |det <var>A</var>|。det 为正，说明朝向没变——原来逆时针的还在逆时针；det 为负，说明朝向翻了，像照镜子。</p>
+
+        <figure class="plate" data-widget="det">
+          <div class="plate-head"><b>面积与朝向 · determinant</b><span class="readout" data-out>—</span></div>
+          <canvas aria-label="拖动两列，观察单位正方形变成的平行四边形面积"></canvas>
+          <div class="controls">
+            <div class="chips">
+              <button class="chip" data-preset="unit">单位</button>
+              <button class="chip" data-preset="shear">剪切</button>
+              <button class="chip" data-preset="stretch">拉伸</button>
+              <button class="chip" data-preset="collapse">压扁</button>
+              <button class="chip" data-preset="flip">翻转</button>
+            </div>
+          </div>
+          <figcaption>两个手柄就是两列。虚线圆是单位圆的像，它的面积按同一个倍数变。把两列拖到共线，面积归零——那一瞬间变换就不可逆了。</figcaption>
+        </figure>
+
+        <p>二阶的公式是 det <var>A</var> = <var>a</var><var>d</var> − <var>b</var><var>c</var>。它不是背出来的：两列 (<var>a</var>, <var>c</var>) 与 (<var>b</var>, <var>d</var>) 张成的平行四边形，面积正好是这个式子。三维里同一个故事讲体积，<var>n</var> 维里讲 <var>n</var> 维体积。</p>
+
+        <div class="def">
+          <span class="def-tag">定义 · definition</span>
+          <p>行列式 <span class="en">determinant</span> 是线性变换对面积（体积）的缩放倍数，带符号。符号表示朝向 <span class="en">orientation</span>：正为保持，负为翻转。</p>
+        </div>
+        <p class="gloss">The determinant scales area; its sign tells whether orientation is preserved or flipped.</p>
+
+        <h3>三种命运</h3>
+        <ul class="plain">
+          <li><b>det = 0</b>：空间被压进更低一维，面积归零，<b>不可逆</b>。</li>
+          <li><b>0 &lt; |det| &lt; 1</b>：面积缩小。</li>
+          <li><b>|det| &gt; 1</b>：面积放大。</li>
+          <li><b>det &lt; 0</b>：面积照常缩放，但朝向翻转。</li>
+        </ul>
+        <p>行列式还是乘法性的：</p>
+        <p class="formula">det(<var>AB</var>) = det(<var>A</var>) det(<var>B</var>)</p>
+        <p>这很自然——先 <var>B</var> 缩放一次，再 <var>A</var> 缩放一次，总倍数是两者相乘。顺便得到一个常用结论：det(<var>A</var><sup>−1</sup>) = 1 / det(<var>A</var>)。</p>
+
+        <h3>手算：三条性质就够</h3>
+        <ul class="plain">
+          <li>交换两行（或两列），行列式变号。</li>
+          <li>某一行乘以 <var>k</var>，行列式乘以 <var>k</var>。</li>
+          <li>把一行的倍数加到另一行上，行列式不变。</li>
+        </ul>
+        <p>前两条是定义直接给的，第三条正是消元法能用的原因：整条消元过程不改变 det，最后化成上三角，det 就是对角线元素的乘积。三角矩阵的行列式因此格外好算：</p>
+        <p class="formula">det <span class="mat" style="--c:3"><span>2</span><span>1</span><span>0</span><span>0</span><span>3</span><span>1</span><span>0</span><span>0</span><span>4</span></span> = 2 × 3 × 4 = 24</p>
+
+        <div class="quiz-set">
+          <details class="quiz">
+            <summary>det <span class="mat" style="--c:2"><span>1</span><span>2</span><span>3</span><span>4</span></span> 是多少？面积和朝向呢？</summary>
+            <div class="a"><p><span class="tag">答</span>1×4 − 2×3 = −2。面积缩放 2 倍，符号为负，所以朝向翻转——两列一个指向第一象限、一个指向第三象限，夹角是钝的。</p></div>
+          </details>
+          <details class="quiz">
+            <summary>det <var>A</var> = 3，det <var>B</var> = 2。求 det(<var>AB</var>) 与 det(<var>A</var><sup>−1</sup>)。</summary>
+            <div class="a"><p><span class="tag">答</span>det(<var>AB</var>) = 3 × 2 = 6。det(<var>A</var><sup>−1</sup>) = 1/3，因为 <var>A</var> 放大 3 倍，倒回去就要缩小 3 倍。</p></div>
+          </details>
+          <details class="quiz">
+            <summary>det <var>A</var> = 0 时，下面哪条一定成立：<var>A</var> 可逆 / <var>Ax</var> = <var>b</var> 有唯一解 / <var>A</var> 的列线性相关？</summary>
+            <div class="a"><p><span class="tag">答</span>只有第三条。det = 0 等价于列线性相关、零空间非平凡、不可逆、秩低于 <var>n</var>——这一串说法是同一件事的五个名字。<var>Ax</var> = <var>b</var> 可能有解，也可能没有，但一定不会"唯一"。</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 第 5 章 -->
+    <section class="chapter" id="ch5">
+      <div class="wrap">
+        <header class="chapter-head">
+          <h2><span class="ch-num">5</span>特征向量</h2>
+          <p class="ch-tagline">eigenvector · eigenvalue · diagonalization</p>
+        </header>
+
+        <p class="lead">一个变换会把大多数向量扭向别处，只有少数几个方向它动不了——那些就是特征向量。</p>
+
+        <h3>方向不变，只伸缩</h3>
+        <p>对着一个矩阵反复问同一个问题：有没有哪个非零向量 <var>v</var>，变换之后只是变长变短，方向还在同一条线上？如果有，那个伸缩倍数就是它的特征值。</p>
+        <p class="formula"><var>A</var><var>v</var> = <var>λ</var><var>v</var></p>
+
+        <figure class="plate" data-widget="eigen">
+          <div class="plate-head"><b>特征方向 · eigenvector</b><span class="readout" data-out>—</span></div>
+          <canvas aria-label="拖动起点向量，观察 A 反复作用后的轨迹与特征方向"></canvas>
+          <div class="controls">
+            <div class="ctl">
+              <label>A =</label>
+              <div class="eqed two">
+                <input class="numin" value="1.2" data-i="0"><input class="numin" value="0.4" data-i="1">
+                <input class="numin" value="0.3" data-i="2"><input class="numin" value="0.8" data-i="3">
+              </div>
+            </div>
+            <div class="ctl"><label>n</label><input type="range" min="0" max="8" step="1" value="4" data-k="n"><output>4</output></div>
+            <button class="chip" data-act="play">播放 Aⁿ</button>
+          </div>
+          <figcaption>拖动起点，看它被 <b>A</b> 反复作用后走出的轨迹。绿色虚线是特征方向：落在上面的向量只伸缩、不转向。如果读数里出现复数，就没有实特征方向——整个平面在转。</figcaption>
+        </figure>
+
+        <p>特征向量是变换的骨架：它们指出哪些方向是稳定的。绝大多数向量会被慢慢拽向特征值最大的那个方向，因为那个方向每一步放大得最多。</p>
+
+        <div class="def">
+          <span class="def-tag">定义 · definition</span>
+          <p>特征向量 <span class="en">eigenvector</span> <var>v</var> ≠ 0 与特征值 <span class="en">eigenvalue</span> <var>λ</var> 满足 <var>A</var><var>v</var> = <var>λ</var><var>v</var>。<var>λ</var> 可以是负数（方向反过来），也可以是复数。</p>
+        </div>
+        <p class="gloss">An eigenvector is a direction the transformation only stretches; the eigenvalue is the stretch factor.</p>
+
+        <h3>怎么算</h3>
+        <p>把 <var>A</var><var>v</var> = <var>λ</var><var>v</var> 移项：<span class="nowrap">(<var>A</var> − <var>λ</var><var>I</var>)<var>v</var> = 0</span>。我们要的是非零的 <var>v</var>，所以 <var>A</var> − <var>λ</var><var>I</var> 必须把某个非零向量压成零——它必须不可逆：</p>
+        <p class="formula">det(<var>A</var> − <var>λ</var><var>I</var>) = 0</p>
+        <p>这个式子叫特征方程 <span class="en">characteristic equation</span>。二阶展开成二次方程，就顺手拿到两个速记关系：</p>
+        <p class="formula"><var>λ</var><sub>1</sub> + <var>λ</var><sub>2</sub> = tr(<var>A</var>)，<var>λ</var><sub>1</sub><var>λ</var><sub>2</sub> = det(<var>A</var>)</p>
+        <p>算完回头用这两条验算，比重新展开一遍省事得多。</p>
+
+        <h3>对角化：把变换摆正</h3>
+        <p>如果两个特征向量线性无关，把它们当列拼成 <var>P</var>，对角线放特征值拼成 <var>D</var>，就有</p>
+        <p class="formula"><var>A</var> = <var>P</var><var>D</var><var>P</var><sup>−1</sup></p>
+        <p>意思是：先换到特征向量做坐标轴，在那里变换只是沿坐标轴各拉伸 <var>λ</var><sub>1</sub>、<var>λ</var><sub>2</sub> 倍，再换回来。幂次立刻变得简单：</p>
+        <p class="formula"><var>A</var><sup>n</sup> = <var>P</var><var>D</var><sup>n</sup><var>P</var><sup>−1</sup></p>
+        <p><var>D</var><sup>n</sup> 只是把对角线各取 <var>n</var> 次方。所以长期行为完全由特征值决定：|λ| 最大的那个方向会吞掉其他所有方向。马尔可夫链收敛、斐波那契数列的通项、微分方程的解，背后都是这一条。</p>
+
+        <h3>复数特征值 = 旋转</h3>
+        <p>旋转 90° 的矩阵 <span class="mat" style="--c:2"><span>0</span><span>−1</span><span>1</span><span>0</span></span>：tr = 0，det = 1，特征方程 <var>λ</var><sup>2</sup> + 1 = 0，得到 <var>λ</var> = ±<var>i</var>。没有实特征向量——每个方向都被转了 90°，没有方向留下来。复数特征值出现，几何上就意味着"在转"。</p>
+
+        <div class="quiz-set">
+          <details class="quiz">
+            <summary><var>A</var> = <span class="mat" style="--c:2"><span>2</span><span>0</span><span>0</span><span>3</span></span> 的特征值和特征向量？</summary>
+            <div class="a"><p><span class="tag">答</span><var>λ</var><sub>1</sub> = 2 配 <var>e</var><sub>1</sub> = (1, 0)，<var>λ</var><sub>2</sub> = 3 配 <var>e</var><sub>2</sub> = (0, 1)。对角矩阵不用算——它本来就在特征方向上，只是沿轴缩放。</p></div>
+          </details>
+          <details class="quiz">
+            <summary><var>A</var> = <span class="mat" style="--c:2"><span>1</span><span>1</span><span>0</span><span>1</span></span> 呢？</summary>
+            <div class="a"><p><span class="tag">答</span><var>λ</var> = 1 是二重根（trace 2、det 1）。但 <var>A</var> − <var>I</var> = <span class="mat" style="--c:2"><span>0</span><span>1</span><span>0</span><span>0</span></span>，零空间只有 (1, 0) 一条线，只能找到一个独立特征向量。几何重数 1 &lt; 代数重数 2，所以不可对角化——这就是"剪切"和"纯缩放"的本质区别。</p></div>
+          </details>
+          <details class="quiz">
+            <summary>为什么旋转 90° 没有实特征向量？</summary>
+            <div class="a"><p><span class="tag">答</span>每个非零方向都被转到了垂直的方向，没有一条线被映射回自己。<var>A</var><var>v</var> = <var>λ</var><var>v</var> 要求像和原向量同向（或反向），而旋转做不到。所以只能在复数里找特征值：<var>λ</var> = ±<var>i</var>，模长 1，正好对应"长度不变，只转角度"。</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 第 6 章 -->
+    <section class="chapter" id="ch6">
+      <div class="wrap">
+        <header class="chapter-head">
+          <h2><span class="ch-num">6</span>正交与最小二乘</h2>
+          <p class="ch-tagline">dot product · projection · normal equations</p>
+        </header>
+
+        <p class="lead">"最近"这个词要先有垂直才说得清楚。这一章把距离变成一道可以直接算的题。</p>
+
+        <h3>点积：投影了多少</h3>
+        <p class="formula"><var>a</var> · <var>b</var> = <var>a</var><sub>1</sub><var>b</var><sub>1</sub> + <var>a</var><sub>2</sub><var>b</var><sub>2</sub> = |<var>a</var>| |<var>b</var>| cos <var>θ</var></p>
+        <p>点积为零，就是垂直（正交 <span class="en">orthogonal</span>）。点积为正，夹角小于 90°；为负，大于 90°。它本质上在回答：<var>b</var> 顺着 <var>a</var> 走了多远。</p>
+
+        <h3>投影：把 b 拆开</h3>
+        <p>把 <var>b</var> 拆成两块：沿着 <var>a</var> 的分量 <var>p</var>，和垂直于 <var>a</var> 的残差 <var>e</var> = <var>b</var> − <var>p</var>。沿着 <var>a</var> 的所有点里，<var>p</var> 离 <var>b</var> 最近。</p>
+        <p class="formula"><var>p</var> = <span class="frac"><span><var>a</var> · <var>b</var></span><span><var>a</var> · <var>a</var></span></span> <var>a</var></p>
+        <p>为什么它最近？因为 <var>b</var>、<var>p</var>、<var>e</var> 构成直角三角形，斜边永远比直角边短。往旁边挪一点，距离就变成斜边了。所以"最近"的判据就是 <b><var>b</var> − <var>p</var> ⊥ <var>a</var></b>。</p>
+
+        <figure class="plate" data-widget="proj">
+          <div class="plate-head"><b>投影 · projection</b><span class="readout" data-out>—</span></div>
+          <canvas aria-label="拖动方向向量 a 与目标向量 b，观察投影与残差垂直"></canvas>
+          <figcaption>拖动 <b>a</b> 定方向，拖动 <b>b</b> 定目标。绿色是投影 <b>p</b>，红色虚线是残差，直角标记告诉你怎么挪都不会更近。</figcaption>
+        </figure>
+
+        <h3>最小二乘：方程无解时怎么办</h3>
+        <p>数据比参数多的时候，<var>Ax</var> = <var>b</var> 通常无解——<var>b</var> 不在列空间里。这时不求精确解，求让误差最小的那个：</p>
+        <p class="formula">min<sub><var>x</var></sub> ‖<var>b</var> − <var>A</var><var>x</var>‖</p>
+        <p>几何上就是上一节的投影，只是把"一条直线"换成"整个列空间"：把 <var>b</var> 投影到列空间上，落点就是 <var>A</var><var>x̂</var>。条件仍然是残差垂直：<var>A</var><sup>T</sup>(<var>b</var> − <var>A</var><var>x</var>) = 0，整理成正规方程 <span class="en">normal equations</span>：</p>
+        <p class="formula"><var>A</var><sup>T</sup><var>A</var> <var>x</var> = <var>A</var><sup>T</sup> <var>b</var></p>
+
+        <figure class="plate" data-widget="ls">
+          <div class="plate-head"><b>最小二乘 · fit a line</b><span class="readout" data-out>—</span></div>
+          <canvas aria-label="拖动数据点或调整斜率截距，观察残差平方和"></canvas>
+          <div class="controls">
+            <div class="ctl"><label>m</label><input type="range" min="-0.5" max="1.6" step="0.01" value="0.35" data-k="m"><output>0.35</output></div>
+            <div class="ctl"><label>k</label><input type="range" min="-1" max="4" step="0.05" value="0.9" data-k="k"><output>0.90</output></div>
+            <button class="chip" data-act="fit">最小二乘</button>
+          </div>
+          <figcaption>拖动数据点（上下动）改样本，拖 m、k 改直线。虚线是每个点的残差，SSE 是它们的平方和。按按钮看 SSE 最小时那条线的位置——它一定经过点云的"重心"，且残差之和为零。</figcaption>
+        </figure>
+
+        <h3>正交基的便宜</h3>
+        <p>如果基向量两两正交，求坐标就不必解方程组了——一个点积就够：<var>c</var><sub><var>i</var></sub> = (<var>v</var> · <var>u</var><sub><var>i</var></sub>) / (<var>u</var><sub><var>i</var></sub> · <var>u</var><sub><var>i</var></sub>)。系数之间互不干扰，各算各的。</p>
+        <p>格拉姆–施密特 <span class="en">Gram–Schmidt</span> 就是把任意一组基改造成正交基的步骤：拿第二个向量，减掉它在第一个方向上的投影；拿第三个，减掉它在前面所有方向上的投影。每减一次，就多出一个正交方向。</p>
+        <p>这件事听起来朴素，但它是傅里叶级数、QR 分解、数据压缩的共同骨架——把一个向量拆成一堆互不干扰的分量，然后分开处理。</p>
+
+        <div class="quiz-set">
+          <details class="quiz">
+            <summary>(1, 1) 与 (1, −1) 正交吗？</summary>
+            <div class="a"><p><span class="tag">答</span>正交。点积 1×1 + 1×(−1) = 0。它们的长度都是 √2，所以 {(1,1)/√2, (1,−1)/√2} 还是一组标准正交基 <span class="en">orthonormal basis</span>。</p></div>
+          </details>
+          <details class="quiz">
+            <summary>(2, 3) 在 (1, 0) 上的投影是多少？</summary>
+            <div class="a"><p><span class="tag">答</span>(2, 0)。投影公式：(a·b / a·a)a = (2/1)(1,0) = (2,0)。残差 (0, 3) 果然垂直于 (1, 0)。</p></div>
+          </details>
+          <details class="quiz">
+            <summary>最小二乘的解为什么满足 <var>A</var><sup>T</sup><var>A</var><var>x</var> = <var>A</var><sup>T</sup><var>b</var>？</summary>
+            <div class="a"><p><span class="tag">答</span>因为残差 <var>b</var> − <var>A</var><var>x</var> 必须垂直于整个列空间。垂直于列空间，就是垂直于 <var>A</var> 的每一列，写成矩阵就是 <var>A</var><sup>T</sup>(<var>b</var> − <var>A</var><var>x</var>) = 0。展开即得正规方程。</p><p>这也解释了为什么拟合直线的"残差和为 0、直线过重心"：常数那一列全是 1，和它正交就是残差求和为零。</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 练习 -->
+    <section class="chapter" id="practice">
+      <div class="wrap">
+        <header class="chapter-head">
+          <h2>练习</h2>
+          <p class="ch-tagline">随机出题 · 立刻判分 · 每题都有解法</p>
+        </header>
+        <p class="lead">题是程序现出的，同一个知识点换个数字就能再来一遍。答完按 Enter 检查；做错了先别看解法。</p>
+
+        <div class="practice">
+          <div class="ptop">
+            <div class="ptopics" id="topics"></div>
+            <div class="pstats" id="pstats"></div>
+          </div>
+          <div class="qcard" id="qcard">
+            <p class="qprompt" id="qprompt">正在出题…</p>
+            <div class="qinputs" id="qinputs"></div>
+            <div class="qactions">
+              <button class="btn" id="check">检查</button>
+              <button class="btn ghost" id="next">下一题</button>
+              <button class="linky" id="reveal">看解法</button>
+            </div>
+            <div class="qfeed" id="qfeed" aria-live="polite"></div>
+            <div class="qsol" id="qsol" hidden></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 术语 -->
+    <section class="chapter" id="glossary">
+      <div class="wrap">
+        <header class="chapter-head">
+          <h2>术语表</h2>
+          <p class="ch-tagline">中文 · English · 一句话</p>
+        </header>
+        <p class="lead">考试、课本、课件里反复出现的那几十个词。搜中文、英文都行。</p>
+
+        <div class="searchbar">
+          <input id="glossary-search" type="search" placeholder="搜：秩 / rank / λ" aria-label="搜索术语">
+        </div>
+        <p id="gl-empty" class="ch-tagline" hidden>没有匹配的术语，换个词试试。</p>
+
+        <div class="gl-group">
+          <h3>基本对象</h3>
+          <dl class="gl-list">
+            <div class="gl"><dt>向量<span class="gl-en">vector</span></dt><dd>一列数，也是一支箭头；只需要加法和数乘两种操作。</dd></div>
+            <div class="gl"><dt>标量<span class="gl-en">scalar</span></dt><dd>单独的一个数，用来缩放向量。</dd></div>
+            <div class="gl"><dt>维数<span class="gl-en">dimension</span></dt><dd>一个空间里基向量的个数。平面的维数是 2。</dd></div>
+            <div class="gl"><dt>线性组合<span class="gl-en">linear combination</span></dt><dd>把几个向量各乘一个系数再相加。</dd></div>
+            <div class="gl"><dt>系数<span class="gl-en">coefficient</span></dt><dd>线性组合里每个向量前面的那个数。</dd></div>
+            <div class="gl"><dt>张成<span class="gl-en">span</span></dt><dd>一组向量全部线性组合的集合，也就是它们"能够到达"的区域。</dd></div>
+            <div class="gl"><dt>线性无关<span class="gl-en">linearly independent</span></dt><dd>没有任何一个向量能由其余的表示；唯一使它组合成零的系数全为零。</dd></div>
+            <div class="gl"><dt>线性相关<span class="gl-en">linearly dependent</span></dt><dd>至少有一个向量是其余的线性组合，组合成零有非零解。</dd></div>
+            <div class="gl"><dt>基<span class="gl-en">basis</span></dt><dd>一组线性无关、且能张成整个空间的向量；空间的"坐标系"。</dd></div>
+            <div class="gl"><dt>坐标<span class="gl-en">coordinates</span></dt><dd>用某组基表示一个向量时的那组系数。换基，坐标就变，向量本身不变。</dd></div>
+            <div class="gl"><dt>标准基<span class="gl-en">standard basis</span></dt><dd>e₁, e₂, … 那一组单位向量，最省事的默认坐标轴。</dd></div>
+          </dl>
+        </div>
+
+        <div class="gl-group">
+          <h3>矩阵与变换</h3>
+          <dl class="gl-list">
+            <div class="gl"><dt>线性变换<span class="gl-en">linear transformation</span></dt><dd>原点不动、直线仍映射成直线、网格保持平行的映射。</dd></div>
+            <div class="gl"><dt>矩阵<span class="gl-en">matrix</span></dt><dd>线性变换在某个基下的数字记录；每一列是基向量的像。</dd></div>
+            <div class="gl"><dt>恒等矩阵<span class="gl-en">identity matrix</span></dt><dd>什么都不做的变换，对角线全 1。</dd></div>
+            <div class="gl"><dt>旋转<span class="gl-en">rotation</span></dt><dd>长度全部不变，det = 1，朝向保持。</dd></div>
+            <div class="gl"><dt>剪切<span class="gl-en">shear</span></dt><dd>一个方向被推斜，正方形变成平行四边形，面积不变。</dd></div>
+            <div class="gl"><dt>缩放<span class="gl-en">scaling</span></dt><dd>各方向按倍数伸缩，det 等于各倍数之积。</dd></div>
+            <div class="gl"><dt>投影<span class="gl-en">projection</span></dt><dd>把空间压到更低维的子空间上；det = 0，不可逆。</dd></div>
+            <div class="gl"><dt>反射<span class="gl-en">reflection</span></dt><dd>像照镜子，朝向翻转，det = −1。</dd></div>
+            <div class="gl"><dt>复合<span class="gl-en">composition</span></dt><dd>先做一个变换再做另一个；对应矩阵乘法，顺序要反着读。</dd></div>
+            <div class="gl"><dt>转置<span class="gl-en">transpose</span></dt><dd>行列互换，记作 Aᵀ。</dd></div>
+          </dl>
+        </div>
+
+        <div class="gl-group">
+          <h3>方程组</h3>
+          <dl class="gl-list">
+            <div class="gl"><dt>线性方程组<span class="gl-en">system of linear equations</span></dt><dd>一组线性方程要同时满足；写成矩阵形式就是 Ax = b。</dd></div>
+            <div class="gl"><dt>增广矩阵<span class="gl-en">augmented matrix</span></dt><dd>把 b 接到 A 右边，写成 [A | b]，方便一起做行变换。</dd></div>
+            <div class="gl"><dt>消元法<span class="gl-en">Gaussian elimination</span></dt><dd>用行变换化成上三角，再回代求未知数。</dd></div>
+            <div class="gl"><dt>行最简形<span class="gl-en">reduced row echelon form</span></dt><dd>消到再也不能消的形状，非零行的个数就是秩。</dd></div>
+            <div class="gl"><dt>秩<span class="gl-en">rank</span></dt><dd>列空间（也等于行空间）的维数，说明"像有多少维"。</dd></div>
+            <div class="gl"><dt>零空间<span class="gl-en">null space</span></dt><dd>所有被 A 压成零的向量，即 Ax = 0 的全部解。</dd></div>
+            <div class="gl"><dt>零化度<span class="gl-en">nullity</span></dt><dd>零空间的维数；rank + nullity = 列数。</dd></div>
+            <div class="gl"><dt>列空间<span class="gl-en">column space</span></dt><dd>A 的所有列的线性组合，也就是所有可能的像。</dd></div>
+            <div class="gl"><dt>可逆<span class="gl-en">invertible</span></dt><dd>存在 A⁻¹；等价于 det ≠ 0、列线性无关、零空间只有零。</dd></div>
+            <div class="gl"><dt>逆矩阵<span class="gl-en">inverse matrix</span></dt><dd>把变换倒回去的那个矩阵，A·A⁻¹ = I。</dd></div>
+          </dl>
+        </div>
+
+        <div class="gl-group">
+          <h3>行列式与特征</h3>
+          <dl class="gl-list">
+            <div class="gl"><dt>行列式<span class="gl-en">determinant</span></dt><dd>面积（体积）的缩放倍数，带符号；符号表示朝向是否翻转。</dd></div>
+            <div class="gl"><dt>迹<span class="gl-en">trace</span></dt><dd>对角线元素之和，等于全部特征值之和。</dd></div>
+            <div class="gl"><dt>特征向量<span class="gl-en">eigenvector</span></dt><dd>变换后方向不变的向量，Av = λv。</dd></div>
+            <div class="gl"><dt>特征值<span class="gl-en">eigenvalue</span></dt><dd>特征向量被伸长的倍数 λ，可以是负数或复数。</dd></div>
+            <div class="gl"><dt>特征方程<span class="gl-en">characteristic equation</span></dt><dd>det(A − λI) = 0，它的根就是特征值。</dd></div>
+            <div class="gl"><dt>特征多项式<span class="gl-en">characteristic polynomial</span></dt><dd>det(A − λI) 展开后的多项式。</dd></div>
+            <div class="gl"><dt>对角化<span class="gl-en">diagonalization</span></dt><dd>A = PDP⁻¹，把变换换成"沿特征方向各伸缩各的"。</dd></div>
+            <div class="gl"><dt>代数重数<span class="gl-en">algebraic multiplicity</span></dt><dd>某个 λ 在特征多项式里作为根出现的次数。</dd></div>
+            <div class="gl"><dt>几何重数<span class="gl-en">geometric multiplicity</span></dt><dd>某个 λ 对应的独立特征向量个数；不够就无法对角化。</dd></div>
+          </dl>
+        </div>
+
+        <div class="gl-group">
+          <h3>正交与拟合</h3>
+          <dl class="gl-list">
+            <div class="gl"><dt>点积<span class="gl-en">dot product</span></dt><dd>a·b = |a||b|cosθ，衡量 b 在 a 方向上投影了多少。</dd></div>
+            <div class="gl"><dt>正交<span class="gl-en">orthogonal</span></dt><dd>点积为零，互相垂直。</dd></div>
+            <div class="gl"><dt>标准正交<span class="gl-en">orthonormal</span></dt><dd>两两正交，且每个向量长度都是 1。</dd></div>
+            <div class="gl"><dt>投影向量<span class="gl-en">projection</span></dt><dd>b 在 a 方向上的分量：(a·b / a·a) a。</dd></div>
+            <div class="gl"><dt>残差<span class="gl-en">residual</span></dt><dd>b 减去投影之后剩下的垂直部分，b − Ax。</dd></div>
+            <div class="gl"><dt>最小二乘<span class="gl-en">least squares</span></dt><dd>方程无解时，让 ‖b − Ax‖ 最小的那个 x。</dd></div>
+            <div class="gl"><dt>正规方程<span class="gl-en">normal equations</span></dt><dd>AᵀAx = Aᵀb，最小二乘解满足的方程。</dd></div>
+            <div class="gl"><dt>格拉姆–施密特<span class="gl-en">Gram–Schmidt</span></dt><dd>把任意一组基改造成正交基的步骤：每次减掉已有方向上的投影。</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="wrap">
+        <p>这张地图只覆盖直觉部分：组合、变换、方程、行列式、特征、正交。计算规则和证明要靠课本与习题，这里负责让你在动笔之前先看见结构。</p>
+        <p class="small">进度保存在这台电脑的浏览器里，不上传。键盘 ← → 可以翻章。</p>
+        <p class="route"><b>组合</b> → 变换 → 方程 → 行列式 → 特征 → 正交</p>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/core.js"></script>
+<script src="assets/widgets.js"></script>
+<script src="assets/practice.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
